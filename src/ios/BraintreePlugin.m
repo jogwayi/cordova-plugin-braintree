@@ -184,7 +184,8 @@ NSString *countryCode;
                 if (result.paymentOptionType == BTUIKPaymentOptionTypeApplePay ) {
                     PKPaymentRequest *apPaymentRequest = [[PKPaymentRequest alloc] init];
                     apPaymentRequest.paymentSummaryItems = @[
-                                                             [PKPaymentSummaryItem summaryItemWithLabel:primaryDescription amount:[NSDecimalNumber decimalNumberWithString: amount]]
+                                                             [PKPaymentSummaryItem summaryItemWithLabel:primaryDescription amount:[NSDecimalNumber decimalNumberWithString: amount]],
+                                                             [PKPaymentSummaryItem summaryItemWithLabel:@"ReelTrail LLC" amount:[NSDecimalNumber decimalNumberWithString: amount]]
                                                              ];
                     apPaymentRequest.supportedNetworks = @[PKPaymentNetworkVisa, PKPaymentNetworkMasterCard, PKPaymentNetworkAmex, PKPaymentNetworkDiscover];
                     apPaymentRequest.merchantCapabilities = PKMerchantCapability3DS;
