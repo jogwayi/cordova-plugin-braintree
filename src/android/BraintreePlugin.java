@@ -165,6 +165,13 @@ public final class BraintreePlugin extends CordovaPlugin implements PaymentMetho
 
         dropInRequest.amount(amount);
 
+        String disablePaypal = args.getString(2);
+        
+        if(disablePaypal.equals("NO")){
+            dropInRequest.disablePaypal();
+        }
+
+
         if (dropInRequest.isAndroidPayEnabled()) {
             // // TODO: Make this conditional
             // dropInRequest.androidPayCart(Cart.newBuilder()
