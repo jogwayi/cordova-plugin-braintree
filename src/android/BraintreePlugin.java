@@ -60,7 +60,7 @@ public final class BraintreePlugin extends CordovaPlugin implements PaymentMetho
 
         try {
             if (action.equals("initialize")) {
-                this.initializeBT(args);
+                this.initialize(args);
             }
             else if (action.equals("presentDropInPaymentUI")) {
                 this.presentDropInPaymentUI(args);
@@ -93,7 +93,7 @@ public final class BraintreePlugin extends CordovaPlugin implements PaymentMetho
 
     // Actions
 
-    private synchronized void initializeBT(final JSONArray args) throws Exception {
+    private synchronized void initialize(final JSONArray args) throws Exception {
 
         // Ensure we have the correct number of arguments.
         if (args.length() != 1) {
@@ -164,12 +164,6 @@ public final class BraintreePlugin extends CordovaPlugin implements PaymentMetho
         String primaryDescription = args.getString(1);
 
         dropInRequest.amount(amount);
-
-        String disablePaypal = args.getString(2);
-        
-        if(disablePaypal.equals("NO")){
-            dropInRequest.disablePaypal();
-        }
 
 
         if (dropInRequest.isAndroidPayEnabled()) {

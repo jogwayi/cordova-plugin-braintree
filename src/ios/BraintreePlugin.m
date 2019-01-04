@@ -51,6 +51,7 @@
 NSString *dropInUIcallbackId;
 bool applePaySuccess;
 bool applePayInited = NO;
+bool paypalDisabled = NO;
 NSString *applePayMerchantID;
 NSString *currencyCode;
 NSString *countryCode;
@@ -58,6 +59,42 @@ NSString *countryCode;
 #pragma mark - Cordova commands
 
 - (void)initialize:(CDVInvokedUrlCommand *)command {
+
+    // Ensure we have the correct number of arguments.
+    if ([command.arguments count] != 1) {
+        CDVPluginResult *res = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"A token is required."];
+        [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+        return;
+    }
+
+    // Obtain the arguments.
+    self.token = [command.arguments objectAtIndex:0];
+
+    if (!self.token) {
+        CDVPluginResult *res = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"A token is required."];
+        [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+        return;
+    }
+
+    self.braintreeClient = [[BTAPIClient alloc] initWithAuthorization:self.token];
+
+    if (!self.braintreeClient) {
+        CDVPluginResult *res = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"The Braintree client failed to initialize."];
+        [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+        return;
+    }
+    paypalDisabled = YES;
+
+    NSString *bundle_id = [NSBundle mainBundle].bundleIdentifier;
+    bundle_id = [bundle_id stringByAppendingString:@".payments"];
+
+    [BTAppSwitch setReturnURLScheme:bundle_id];
+
+    CDVPluginResult *res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+}
+
+- (void)initializeWithPayPal:(CDVInvokedUrlCommand *)command {
 
     // Ensure we have the correct number of arguments.
     if ([command.arguments count] != 1) {
@@ -151,7 +188,6 @@ NSString *countryCode;
     }
 
     NSString* primaryDescription = [command.arguments objectAtIndex:1];
-    NSString* paypalDisabled = [command.arguments objectAtIndex:2];
     
     // Save off the Cordova callback ID so it can be used in the completion handlers.
     dropInUIcallbackId = command.callbackId;
@@ -160,12 +196,7 @@ NSString *countryCode;
     BTDropInRequest *paymentRequest = [[BTDropInRequest alloc] init];
     paymentRequest.amount = amount;
     paymentRequest.applePayDisabled = !applePayInited;
-    if ([paypalDisabled isEqualToString:@"NO"]){ 
-        paymentRequest.paypalDisabled = NO;
-    } else {
-        paymentRequest.paypalDisabled = YES;
-    }
-
+    paymentRequest.paypalDisabled = paypalDisabled; 
     BTDropInController *dropIn = [[BTDropInController alloc] initWithAuthorization:self.token request:paymentRequest handler:^(BTDropInController * _Nonnull controller, BTDropInResult * _Nullable result, NSError * _Nullable error) {
         [self.viewController dismissViewControllerAnimated:YES completion:nil];
         if (error != nil) {

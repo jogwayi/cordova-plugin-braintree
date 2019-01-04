@@ -44,6 +44,9 @@ Used to initialize the Braintree client. The client must be initialized before o
 Method Signature:
 
 `initialize(token, successCallback, failureCallback)`
+or:
+
+`initializeWithPayPal(token, successCallback, failureCallback)` to initiate the client with paypal enabled
 
 Parameters:
 

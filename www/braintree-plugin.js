@@ -30,7 +30,15 @@ BraintreePlugin.initialize = function initialize(token, successCallback, failure
 
   exec(successCallback, failureCallback, PLUGIN_ID, 'initialize', [token]);
 };
+BraintreePlugin.initializeWithPayPal = function initializeWithPayPal(token, successCallback, failureCallback) {
 
+  if (!token || typeof(token) !== "string") {
+      failureCallback("A non-null, non-empty string must be provided for the token parameter.");
+      return;
+  }
+
+  exec(successCallback, failureCallback, PLUGIN_ID, "initializeWithPayPal", [token]);
+};
 /**
  * Used to configure Apple Pay on iOS.
  *
@@ -82,14 +90,9 @@ BraintreePlugin.presentDropInPaymentUI = function showDropInUI(options, successC
     options.amount = (options.amount * 1).toFixed(2);
   }
 
-  if (typeof(options.paypalDisabled) !== "undefined") {
-    options.paypalDisabled = "NO";
-};
-
   var pluginOptions = [
     options.amount,
-    options.primaryDescription,
-    options.paypalDisabled
+    options.primaryDescription
   ];
 
   exec(successCallback, failureCallback, PLUGIN_ID, 'presentDropInPaymentUI', pluginOptions);
