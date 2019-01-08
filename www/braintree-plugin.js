@@ -97,7 +97,9 @@ BraintreePlugin.presentDropInPaymentUI = function showDropInUI(options, successC
 
   exec(successCallback, failureCallback, PLUGIN_ID, 'presentDropInPaymentUI', pluginOptions);
 };
-
+BraintreePlugin.disablePayPal = function disablePayPal(successCallback, failureCallback) {
+  exec(successCallback, failureCallback, PLUGIN_ID, 'disablePayPal');
+};
 BraintreePlugin.paypalProcess = function paypalProcess(amount, currency, env, successCallback, failureCallback) {
   exec(successCallback, failureCallback, PLUGIN_ID, 'paypalProcess', [amount, currency, env]);
 };
