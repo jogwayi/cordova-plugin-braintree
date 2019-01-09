@@ -58,7 +58,7 @@ NSString *countryCode;
 
 #pragma mark - Cordova commands
 
-- (void)initialize:('CDVInvokedUrlCommand' *)command {
+- (void)initialize:(CDVInvokedUrlCommand *)command {
 
     // Ensure we have the correct number of arguments.
     if ([command.arguments count] != 1) {
@@ -138,6 +138,20 @@ NSString *countryCode;
     }
 
     paypalDisabled = YES;
+	CDVPluginResult *res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+	[self.commandDelegate sendPluginResult:res callbackId:command.callbackId];    
+}
+
+- (void)enablePayPal :(CDVInvokedUrlCommand *)command{
+
+    // Ensure the client has been initialized.
+    if (!self.braintreeClient) {
+        CDVPluginResult *res = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"The Braintree client must first be initialized via BraintreePlugin.initialize(token)"];
+        [self.commandDelegate sendPluginResult:res callbackId:command.callbackId];
+        return;
+    }
+
+    paypalDisabled = NO;
 	CDVPluginResult *res = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
 	[self.commandDelegate sendPluginResult:res callbackId:command.callbackId];    
 }
